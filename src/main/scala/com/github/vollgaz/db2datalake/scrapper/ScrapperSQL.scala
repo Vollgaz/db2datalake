@@ -1,7 +1,7 @@
 package com.github.vollgaz.db2datalake.scrapper
 
 import com.github.vollgaz.db2datalake.MainConfig
-import com.github.vollgaz.db2datalake.SchemaExtension.ExtendedDataFrame
+import com.github.vollgaz.db2datalake.schema.DataframeExtension.Implicits
 import org.apache.log4j.Logger
 
 import scala.collection.parallel.ForkJoinTaskSupport

@@ -2,6 +2,9 @@ package com.github.vollgaz.db2datalake.scrapper
 
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
+import java.sql.Timestamp
+import java.sql.Date
+import scala.math.BigDecimal
 
 /**
  * Spark 2.x can only handle numerical column in partitioning over JDBC.
@@ -9,37 +12,37 @@ import org.apache.spark.sql.types._
  */
 class PredicatesBuilder {
 
-    def apply(column: StructField, numPartitions: Int, minmax: Row): Array[String] = {
-        if (minmax.get(1) == null || minmax.get(0) == null || numPartitions <= 1) return Array[String]("1=1")
+    def apply(column: StructField, numPartitions: Int, minmax: Map[String,String]): Array[String] = {
+        if (minmax("min") == null || minmax("max") == null || numPartitions <= 1) return Array[String]("1=1")
         column.dataType match {
             case _: TimestampType =>
-                val pivotValues: Array[Any] = splitOnLong(numPartitions, minmax.getTimestamp(0).getTime, minmax.getTimestamp(1).getTime)
+                val pivotValues: Array[Any] = splitOnLong(numPartitions, Timestamp.valueOf(minmax("min")).getTime(), Timestamp.valueOf(minmax("max")).getTime())
                     .map(x => new java.sql.Timestamp(x)).map(x => s"""'$x'""")
                 buildPredicates(column.name, pivotValues)
             case _: DateType =>
-                val pivotValues: Array[Any] = splitOnLong(numPartitions, minmax.getDate(0).getTime, minmax.getDate(1).getTime)
+                val pivotValues: Array[Any] = splitOnLong(numPartitions, Date.valueOf(minmax("min")).getTime(), Date.valueOf(minmax("max")).getTime())
                     .map(x => new java.sql.Date(x)).map(x => s"""'$x'""")
                 buildPredicates(column.name, pivotValues)
             case _: LongType =>
-                val pivotValues = splitOnLong(numPartitions, minmax.getLong(0), minmax.getLong(1)).toArray[Any]
+                val pivotValues = splitOnLong(numPartitions, minmax("min").toLong,  minmax("max").toLong).toArray[Any]
                 buildPredicates(column.name, pivotValues)
             case _: IntegerType =>
-                val pivotValues = splitOnLong(numPartitions, minmax.getInt(0), minmax.getInt(1)).toArray[Any]
+                val pivotValues = splitOnLong(numPartitions,  minmax("min").toInt,  minmax("max").toInt).toArray[Any]
                 buildPredicates(column.name, pivotValues)
             case _: ShortType =>
-                val pivotValues = splitOnLong(numPartitions, minmax.getShort(0), minmax.getShort(1)).toArray[Any]
+                val pivotValues = splitOnLong(numPartitions,  minmax("min").toShort,  minmax("max").toShort).toArray[Any]
                 buildPredicates(column.name, pivotValues)
             case _: ByteType =>
-                val pivotValues = splitOnLong(numPartitions, minmax.getByte(0), minmax.getByte(1)).toArray[Any]
+                val pivotValues = splitOnLong(numPartitions,  minmax("min").toByte,  minmax("max").toByte).toArray[Any]
                 buildPredicates(column.name, pivotValues)
             case _: DecimalType =>
-                val pivotValues = splitOnBigDecimal(numPartitions, minmax.getDecimal(0), minmax.getDecimal(1)).toArray[Any]
+                val pivotValues = splitOnBigDecimal(numPartitions,  BigDecimal(minmax("min")),  BigDecimal(minmax("max"))).toArray[Any]
                 buildPredicates(column.name, pivotValues)
             case _: DoubleType =>
-                val pivotValues = splitOnBigDecimal(numPartitions, minmax.getDouble(0), minmax.getDouble(1)).toArray[Any]
+                val pivotValues = splitOnBigDecimal(numPartitions, minmax("min").toDouble,  minmax("max").toDouble).toArray[Any]
                 buildPredicates(column.name, pivotValues)
             case _: FloatType =>
-                val pivotValues = splitOnBigDecimal(numPartitions, BigDecimal(minmax.getFloat(0)), BigDecimal(minmax.getFloat(1))).toArray[Any]
+                val pivotValues = splitOnBigDecimal(numPartitions, minmax("min").toFloat,  minmax("max").toFloat).toArray[Any]
                 buildPredicates(column.name, pivotValues)
             // Will download everything on one partition
             case _ => Array[String]("1=1")

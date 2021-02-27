@@ -8,18 +8,29 @@
 .cache
 .history
 .lib/
+.bsp/
 dist/*
 target/
 lib_managed/
 src_managed/
 project/boot/
 project/plugins/project/
+project/project
+
+# bug coursier with java11
+null/
 
 # Scala-IDE specific
+.metals/
+.vscode/
+.bloop/
+.ammonite/
 .idea/
 .idea/libraries
 .scala_dependencies/
 .worksheet/
+project/.bloop
+
 
 #spark
 spark-warehouse/
