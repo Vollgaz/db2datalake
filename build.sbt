@@ -3,24 +3,22 @@ organization := "com.github.vollgaz"
 scalaVersion := "2.12.12"
 
 libraryDependencies ++= {
-  val sparkVersion = "3.0.2"
+  val Vspark = "3.1.1"
+  val VscalaTest = "3.2.6"
 
   Seq(
-    "org.apache.spark" %% "spark-sql" % sparkVersion % Provided,
-    "org.mongodb.spark" %% "mongo-spark-connector" % "3.0.0" % Provided,
-    //"com.hortonworks.hive" %% "hive-warehouse-connector" % "1.0.0.7.2.0.0-237" % Provided,
+    "org.apache.spark" %% "spark-sql" % Vspark % Provided,
+    "org.apache.spark" %% "spark-core" % Vspark % Provided,
     "com.github.scopt" %% "scopt" % "4.0.0",
-    "org.scalatest" %% "scalatest" % "3.2.0" % Test,
-    "org.scalatest" %% "scalatest-featurespec" % "3.2.0" % Test,
+    "org.scalatest" %% "scalatest" % VscalaTest % Test,
+    "org.scalatest" %% "scalatest-featurespec" % VscalaTest % Test,
     "org.xerial" % "sqlite-jdbc" % "3.34.0" % Test
   )
 }
 
-// resolvers := List(
-//     "Cloudera Release" at "https://repository.cloudera.com/content/repositories/releases/"
-// )
-
-parallelExecution in Test := false
+Test / parallelExecution := false
+Test / classLoaderLayeringStrategy := ClassLoaderLayeringStrategy.ScalaLibrary
+Test / classLoaderLayeringStrategy := ClassLoaderLayeringStrategy.Flat
 
 assemblyMergeStrategy in assembly := {
   case PathList("META-INF", xs @ _*) => MergeStrategy.discard

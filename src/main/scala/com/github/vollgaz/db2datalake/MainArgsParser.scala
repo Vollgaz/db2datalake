@@ -28,7 +28,7 @@ class MainArgsParser(args: Array[String]) {
                         .text("Username to authenticate to the database"),
                     opt[String]('j', "jceks-file")
                         .required()
-                        .action((value, config) => config.copy(dbJceksPath = value))
+                        .action((value, config) => config.copy(dbJceksPath = Some(value)))
                         .text("File containing the password for the user"),
                     opt[String]('o', "output")
                         .required()

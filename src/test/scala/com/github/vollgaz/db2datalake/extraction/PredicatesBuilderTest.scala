@@ -1,5 +1,4 @@
-package com.github.vollgaz.db2datalake.scrapper
-
+package com.github.vollgaz.db2datalake.extraction
 import java.sql.{Date, Timestamp}
 
 import org.apache.spark.sql.Row
@@ -11,7 +10,7 @@ import org.apache.log4j.Level
 class PredicatesBuilderTest extends AnyFlatSpec {
 
   val predBuilder = new PredicatesBuilder()
-  
+
   "input check" should "return 1=1 for negative partition" in {
     val minmaxRow = Map("min" -> "0", "max" -> "10000")
     val partition = -150
