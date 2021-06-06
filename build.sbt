@@ -15,8 +15,10 @@ libraryDependencies ++= {
     "org.xerial" % "sqlite-jdbc" % "3.34.0" % Test
   )
 }
-
+Test / fork := false
 Test / parallelExecution := false
+Test / testForkedParallel := false
+Test / testOptions := Seq(Tests.Filter(s => s.endsWith("Test")))
 Test / classLoaderLayeringStrategy := ClassLoaderLayeringStrategy.ScalaLibrary
 Test / classLoaderLayeringStrategy := ClassLoaderLayeringStrategy.Flat
 

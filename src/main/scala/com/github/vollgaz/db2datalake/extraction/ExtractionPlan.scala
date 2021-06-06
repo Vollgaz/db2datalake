@@ -20,8 +20,8 @@ object ExtractionPlan {
     *                    - 'mytable'
     *                    - 'mytable::splitColumn'
     *                    - 'mytable::splitColumn::[step1~step2~...~stepN]'
-    *                    - 'mytable::splitColumn::[min~max]'
-    *                    - 'mytable::splitColumn::[min~max~numberPartitions]'
+    *                    - 'mytable::splitColumn::]min~max['
+    *                    - 'mytable::splitColumn::]min~max~numberPartitions['
     *                    - 'mytable::splitColumn::{numberPartitions}'
     * @return
     */
@@ -36,7 +36,7 @@ object ExtractionPlan {
       case Array(t, c) => predicatesOverJdbc(sparkJdbcProperties, defaultNumPartitions, t, c)
       case Array(t)    => predicatesOverJdbc(sparkJdbcProperties, defaultNumPartitions, t)
       // TODO : Found proper exception
-      case _ => throw new Exception(s"table configuration uninterpretable -- config:$tableConfig")
+      case _ => throw new Exception(s"table configuration uninterpretable -- tableConfig:$tableConfig")
     }
   }
 

@@ -7,7 +7,7 @@ import org.apache.spark.sql.functions._
 
 
 object DataframeExtension {
-  implicit class Implicits(df: DataFrame) {
+  implicit class Implicits(val df: DataFrame) extends AnyVal {
 
     /** The driver jdbc on DB2 return trailing whitespaces.
       * It is mandatory to remove them.

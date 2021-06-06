@@ -4,8 +4,10 @@ import java.util.Properties
 
 import org.apache.spark.sql.{SaveMode, SparkSession}
 import scala.collection.immutable.HashMap
+import java.nio.file.Files
+import java.nio.file.Paths
 
-class TitanicDatabaseMock {
+trait TitanicDatabaseMock {
 
   val dbUrl = "jdbc:sqlite:target/sqlite.db"
   val table = "titanic"
@@ -33,6 +35,10 @@ class TitanicDatabaseMock {
       .mode(SaveMode.Overwrite)
       .options(defaultProperties)
       .save()
-
   }
+
+  def cleanDBTitanic(): Unit = {
+    Files.delete(Paths.get("target/sqlite.db"))
+  }
+
 }

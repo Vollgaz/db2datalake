@@ -4,20 +4,9 @@ import com.github.vollgaz.db2datalake.TitanicDatabaseMock
 import org.apache.spark.sql.SparkSession
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.BeforeAndAfterAll
+import com.github.vollgaz.db2datalake.SharedSparkSession
 
-class ExtractionPlanTest extends AnyFlatSpec with BeforeAndAfterAll {
-  lazy val spark = SparkSession.active
-  lazy val mock = new TitanicDatabaseMock()
-
-  override def beforeAll() {
-    SparkSession.builder().master("local[1]").appName("ExtractionPlanTest").getOrCreate()
-    spark.sparkContext.setLogLevel("ERROR")
-    mock.createDBTitanic()
-  }
-
-  override def afterAll() {
-    spark.stop()
-  }
+class ExtractionPlanTest extends SharedSparkSession {
 
   /** Provide only the table
     * The column will be found and the number of partitions is the default value.
@@ -34,9 +23,9 @@ class ExtractionPlanTest extends AnyFlatSpec with BeforeAndAfterAll {
         )
     )
 
-    val actual = ExtractionPlan.fromString(mock.defaultProperties, input, mock.defaultNumPartitions)
+    val actual = ExtractionPlan.fromString(defaultProperties, input, defaultNumPartitions)
     assert(actual.table == expected.table)
-    assert(actual.predicates == expected.predicates)
+    assert(actual.predicates sameElements expected.predicates)
   }
 
   /** Provide table and column
@@ -54,9 +43,9 @@ class ExtractionPlanTest extends AnyFlatSpec with BeforeAndAfterAll {
         )
     )
 
-    val actual = ExtractionPlan.fromString(mock.defaultProperties, input, mock.defaultNumPartitions)
+    val actual = ExtractionPlan.fromString(defaultProperties, input, defaultNumPartitions)
     assert(actual.table == expected.table)
-    assert(actual.predicates == expected.predicates)
+    assert(actual.predicates sameElements expected.predicates)
   }
 
   /** Provide table, column, min and max values
@@ -74,9 +63,9 @@ class ExtractionPlanTest extends AnyFlatSpec with BeforeAndAfterAll {
         )
     )
 
-    val actual = ExtractionPlan.fromString(mock.defaultProperties, input, mock.defaultNumPartitions)
+    val actual = ExtractionPlan.fromString(defaultProperties, input, defaultNumPartitions)
     assert(actual.table == expected.table)
-    assert(actual.predicates == expected.predicates)
+    assert(actual.predicates sameElements expected.predicates)
   }
 
   /** Provide table, column, min / max values and the number of partitions
@@ -92,9 +81,9 @@ class ExtractionPlanTest extends AnyFlatSpec with BeforeAndAfterAll {
         )
     )
 
-    val actual = ExtractionPlan.fromString(mock.defaultProperties, input, mock.defaultNumPartitions)
+    val actual = ExtractionPlan.fromString(defaultProperties, input, defaultNumPartitions)
     assert(actual.table == expected.table)
-    assert(actual.predicates == expected.predicates)
+    assert(actual.predicates sameElements expected.predicates)
   }
 
   /** Provide table anc column
@@ -110,9 +99,9 @@ class ExtractionPlanTest extends AnyFlatSpec with BeforeAndAfterAll {
         )
     )
 
-    val actual = ExtractionPlan.fromString(mock.defaultProperties, input, mock.defaultNumPartitions)
+    val actual = ExtractionPlan.fromString(defaultProperties, input, defaultNumPartitions)
     assert(actual.table == expected.table)
-    assert(actual.predicates == expected.predicates)
+    assert(actual.predicates sameElements expected.predicates)
   }
 
   /** Provide steps to build the ranges on int
@@ -128,10 +117,10 @@ class ExtractionPlanTest extends AnyFlatSpec with BeforeAndAfterAll {
             "MYCOL >= 20"
         )
     )
-    val actual = ExtractionPlan.fromString(mock.defaultProperties, input, mock.defaultNumPartitions)
+    val actual = ExtractionPlan.fromString(defaultProperties, input, defaultNumPartitions)
 
     assert(actual.table == expected.table)
-    assert(actual.predicates == expected.predicates)
+    assert(actual.predicates sameElements expected.predicates)
   }
 
   /** Provide steps to build the ranges on timestamp
@@ -147,10 +136,10 @@ class ExtractionPlanTest extends AnyFlatSpec with BeforeAndAfterAll {
             "MYCOL >= '2020-01-01 12:12:12'"
         )
     )
-    val actual = ExtractionPlan.fromString(mock.defaultProperties, input, mock.defaultNumPartitions)
+    val actual = ExtractionPlan.fromString(defaultProperties, input, defaultNumPartitions)
 
     assert(actual.table == expected.table)
-    assert(actual.predicates == expected.predicates)
+    assert(actual.predicates sameElements expected.predicates)
   }
 
   /** Provide steps to build the ranges on timestamp
@@ -159,9 +148,9 @@ class ExtractionPlanTest extends AnyFlatSpec with BeforeAndAfterAll {
   it should "handle split on string column" in {
     val input = "titanic::Name"
     val expected = ExtractionPlan("titanic", Array[String]("1=1"))
-    val actual = ExtractionPlan.fromString(mock.defaultProperties, input, mock.defaultNumPartitions)
+    val actual = ExtractionPlan.fromString(defaultProperties, input, defaultNumPartitions)
 
     assert(actual.table == expected.table)
-    assert(actual.predicates == expected.predicates)
+    assert(actual.predicates sameElements expected.predicates)
   }
 }
